@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG" monitorInterval="60">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout> 
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern>
+			</PatternLayout>
+		</Console>
+		
+		<JDBC name="databaseAppender" tableName="logging" ignoreExceptions="false">
+				<Column name="EVENT_DATE" isEventTimestamp="true" />
+				<Column name="LEVEL" pattern="%level" />
+				<Column name="LOGGER" pattern="%logger" />
+				<Column name="MSG" pattern="%message" />
+				<Column name="THROWABLE" pattern="%ex{full}" />
+	    </JDBC>
+		<File name="FileAppender" fileName="C:/Users/user_name/Downloads/application.log">
+            <PatternLayout> 
+            	<Pattern>%d{dd-MM-yyyy HH:mm:ss} [%t] %-5level %-50c{1.} - %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+        
+        <RollingFile name="Models" fileName="C:/Users/user_name/Downloads/speaker.log"
+                     filePattern="C:/Users/marchetti/Downloads/speaker-%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss,SSS} %5p %c{1}:%L - %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="25 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="C:/Users/user_name/Downloads" maxDepth="1">
+                    <IfFileName glob="speaker-*.log*" />
+                    <IfLastModified age="14d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        
+        <RollingFile name="debug" fileName="C:/Users/user_name/Downloads/debug.log"
+                     filePattern="C:/Users/marchetti/Downloads/debug-%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss,SSS} %5p %c{1}:%L - %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="C:/Users/user_name/Downloads" maxDepth="1">
+                    <IfFileName glob="debug-*.log*" />
+                    <IfLastModified age="1d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        
+	</Appenders>
+
+	<Loggers>
+        
+        <Logger name="com.spring.mssql.models.Speaker" level="info" additivity="false">
+            <AppenderRef ref="Models"/>
+        </Logger>
+        
+        <Logger name="Speaker" level="debug" additivity="false">
+            <AppenderRef ref="debug"/>
+        </Logger>
+	
+		<Root level="info">
+            <AppenderRef ref="Console"/>
+		</Root>
+	</Loggers>
+
+</Configuration>

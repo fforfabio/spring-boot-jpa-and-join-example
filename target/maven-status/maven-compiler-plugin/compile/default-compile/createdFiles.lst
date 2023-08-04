@@ -1,0 +1,7 @@
+com\suzuki\spring\mssql\models\Speaker.class
+com\suzuki\spring\SpringBootJpaConnectionApplication.class
+com\suzuki\spring\mssql\controller\Controller.class
+com\suzuki\spring\mssql\repository\SpeakerRepository.class
+com\suzuki\spring\mssql\models\Tutorial.class
+com\suzuki\spring\mssql\repository\TutorialRepository.class
+com\suzuki\spring\mssql\dto\speakerTutorialsDTO.class
