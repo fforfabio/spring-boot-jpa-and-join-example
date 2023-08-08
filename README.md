@@ -45,7 +45,7 @@ Per effettuare il join tra due modelli è necessario specificare almeno in uno d
 Ogni modello avrà il suo repository che dovrà andare ad estendere `JpaRepository<T, ID>`.  
 Nel repository possono essere definiti dei metodi ed annotarli con `@Query` per definire delle query da eseguire sulla tabella ogni volta che quel determinato metodo verrà richiamato. Queste quey possono essere definite nel repository stesso o nel modello.  
 Le query possono essere scritte in SQL, lavorando sulle tabelle, o in JPQL, lavorando sul modello stesso.  
-E' possibile definire dei metodi senza dichiarare la query esplicitamente. JPA, in base al nome del metodo stesso, andrà a creare automaticamente la query. Per esempio, il modello Tutorial presenta un attributo title. Nel suo repository si può semplicemente dichiarare il metodo `List<Tutorial> findByTitleContaining(String title);` è JPA restituirà tutti gli oggetti Tutorial il cui titolo contiene il parametro title.  
+E' possibile definire dei metodi senza dichiarare la query esplicitamente. JPA, in base al nome del metodo stesso, andrà a creare automaticamente la query. Per esempio, il modello Tutorial presenta un attributo title. Nel suo repository si può semplicemente dichiarare il metodo `List<Tutorial> findByTitleContaining(String title);` e JPA restituirà tutti gli oggetti Tutorial il cui titolo contiene il parametro title.  
 Di default ogni repository avrà già dei metodi che eseguono delle query standard sulle tabelle, come: `findById()`, `findAll()`, `deleteById()`, ...  
 
 **Controller**  
