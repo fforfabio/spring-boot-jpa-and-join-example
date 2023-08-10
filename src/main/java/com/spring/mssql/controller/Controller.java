@@ -23,16 +23,59 @@ import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.responses.*;
 
 
+/**
+ * This is the controller class, where all the endpoints
+ * of this application are implemented.
+ * To make it a controller the class must be annotated with
+ * {@link org.springframework.web.bind.annotation.ReastController @RestController}.
+ * <br>
+ * It is also specified the origins allowed for the CORS
+ * with {@link org.springframework.web.bind.annotation.CrossOrigin @CrossOrigin},
+ * and the first part of the path to call to retrieve the
+ * information from an endpoint with
+ * {@link org.springframework.web.bind.annotation.RequestMapping @RequestMapping}.
+ * @since 1.0.0
+ * @author fforfabio
+ * @see
+ * <ul>
+ * <li><a href="https://spring.io/guides/gs/rest-service-cors/">Spring doc for CORS</a></li>
+ * <li><a href="https://www.baeldung.com/spring-cors">CORS pt.2</a></li>
+ * </ul>
+ **/
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/api")
 public class Controller {
 
+	/**
+	 * To perform a call to a query declared inside 
+	 * the {@link com.spring.mssql.repository.TutorialRepository TutorialRepository} 
+	 * we must have a variable that will link us to the 
+	 * repository itself.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	TutorialRepository tutorialRepository;
 	
+	
+	/**
+	 * To perform a call to a query declared inside 
+	 * the {@link com.spring.mssql.repository.SpeakerRepository SpeakerRepository} 
+	 * we must have a variable that will link us to the 
+	 * repository itself.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	SpeakerRepository speakerRepository;
 
-	// With this constructor we will avoid the use of the @Autowired annotation
+	
+	/**
+	 * With this constructor we will avoid the use of the
+	 * {@link org.springframework.beans.factory.annotation.Autowired @Autowired} 
+	 * annotation.
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	public Controller(TutorialRepository tutorialRepository, SpeakerRepository speakerRepository) {
 		this.tutorialRepository = tutorialRepository;
 		this.speakerRepository = speakerRepository;
@@ -64,18 +107,43 @@ public class Controller {
 		}
 	}
 
+	
+	/**
+	 * @param id of the tutorial to retrieve as 
+	 * {@link org.springframework.web.bind.annotation.PathVariable @PathVariable}
+	 * @return {@link org.springframework.lang.Nullable.HttpStatus#CREATED 201}
+	 * and the tutorial if its identifier is present into the database. Otherwise
+	 * {@link org.springframework.lang.Nullable.HttpStatus#NOT_FOUND 404}
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@GetMapping("/tutorials/{id}")
 	// @PathVarible will retrieve the parameter from the url
 	public ResponseEntity<Tutorial> getTutorialById(@PathVariable("id") long id) {
+		
+		// Call the findById query
 		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
 
 		if (tutorialData.isPresent()) {
+			// Return the tutorial
 			return new ResponseEntity<>(tutorialData.get(), HttpStatus.OK);
 		} else {
+			// Return 404 if no tutorial is found
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 
+	
+	/**
+	 * @param tutorial to save into the database as a 
+	 * {@link org.springframework.web.bind.annotation.RequestBody @RequestBody}
+	 * @return {@link org.springframework.lang.Nullable.HttpStatus#CREATED 201}
+	 * and the tutorial if the save operation is succeed. Otherwise
+	 * {@link org.springframework.lang.Nullable.HttpStatus#NO_CONTENT 204} or
+	 * {@link org.springframework.lang.Nullable.HttpStatus#INTERNAL_SERVER_ERROR 500}
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@PostMapping("/tutorials")
 	@ApiResponse(responseCode = "201", description = "Tutorial created")
 	// @RequestBody will retrieve the parameter from the body of the request
@@ -95,6 +163,11 @@ public class Controller {
 		}
 	}
 
+	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@PutMapping("/tutorials/{id}")
 	// @PathVarible will retrieve the parameter from the url
 	// @RequestBody will retrieve the parameter from the body of the request
@@ -113,6 +186,11 @@ public class Controller {
 		}
 	}
 
+	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@DeleteMapping("/tutorials/{id}")
 	// @PathVarible will retrieve the parameter from the url
 	public ResponseEntity<HttpStatus> deleteTutorial(@Parameter(description = "The id of the tutorial to be deleted", required = true)@PathVariable("id") long id) {
@@ -124,6 +202,11 @@ public class Controller {
 		}
 	}
 
+	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@DeleteMapping("/tutorials")
 	public ResponseEntity<HttpStatus> deleteAllTutorials() {
 		try {
@@ -135,6 +218,11 @@ public class Controller {
 
 	}
 
+	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@GetMapping("/tutorials/published")
 	public ResponseEntity<List<Tutorial>> findByPublished() {
 		try {
@@ -149,6 +237,11 @@ public class Controller {
 		}
 	}
 	
+	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@GetMapping("/tutorialsFunction")
 	public ResponseEntity<List<Tutorial>> getAllTutorials() {
 		try {
@@ -164,6 +257,10 @@ public class Controller {
 	}
 	
 	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@GetMapping("/speakers")
 	public ResponseEntity<List<Speaker>> getAllSpeakers() {
 		try {
@@ -182,6 +279,10 @@ public class Controller {
 	}
 	
 	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@GetMapping("/speakers/{id}")
 	// @PathVarible will retrieve the parameter from the url
 	public ResponseEntity<Speaker> getSpeakerById(@PathVariable("id") long id) {
@@ -195,6 +296,10 @@ public class Controller {
 	}
 	
 	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@PostMapping("/createSpeaker")
 	@Operation(summary = "Create a new speaker.",
     	description = "Create a new speaker with first name and last name as mandatory parameters.",
@@ -214,6 +319,10 @@ public class Controller {
 	}
 	
 	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@PutMapping("/speakers/{id}")
 	// @PathVarible will retrieve the parameter from the url
 	// @RequestBody will retrieve the parameter from the body of the request
@@ -230,7 +339,11 @@ public class Controller {
 		}
 	}
 
-	
+
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@DeleteMapping("/speakers/{id}")
 	// @PathVarible will retrieve the parameter from the url
 	public ResponseEntity<HttpStatus> deleteSpeaker(@PathVariable("id") long id) {
@@ -256,6 +369,10 @@ public class Controller {
 	}
 
 	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@DeleteMapping("/speakers")
 	public ResponseEntity<HttpStatus> deleteAllSpeakers() {
 		try {
@@ -272,6 +389,10 @@ public class Controller {
 	}
 	
 	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@GetMapping("/speakersByFirst")
 	// @RequestBody will retrieve the parameter from the body of the request
 	public ResponseEntity<Map<Long, Speaker>> getSpeakersByFirstName(@RequestBody String firstName) {
@@ -288,6 +409,10 @@ public class Controller {
 	}
 	
 	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@GetMapping("/speakerTutorialsJoinExampleDTOJPQL")
 	// @RequestBody will retrieve the parameter from the body of the request
 	public ResponseEntity<List<speakerTutorialsDTO>> getSpeakerTutorialsWithJoinDTOJPQL(@RequestBody String speakerId) {
@@ -302,6 +427,11 @@ public class Controller {
 		}
 	}
 	
+	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@GetMapping("/speakerTutorialsJoinExampleDTONativeQuery")
 	// @RequestBody will retrieve the parameter from the body of the request
 	public ResponseEntity<Map<Long, speakerTutorialsDTO>> getSpeakerTutorialsWithJoinDTONativeQuery(@RequestBody String speakerId) {
@@ -318,6 +448,11 @@ public class Controller {
 		}
 	}
 	
+	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@GetMapping("/getAllJoinDTONativeQuery")
 	public ResponseEntity<List<speakerTutorialsDTO>> getAllJoinDTONativeQuery() {
 		try {
@@ -331,6 +466,11 @@ public class Controller {
 		}
 	}
 	
+	
+	/**
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@GetMapping("/getTutorialsCount")
 	public ResponseEntity<List<speakerTutorialsDTO>> getTutorialsCount(@RequestBody(required=false) String titleLike) {
 		try {
