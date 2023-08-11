@@ -12,7 +12,7 @@
 	
 	<groupId>com.spring.mssql</groupId>
 	<artifactId>spring-boot-jpa-connection</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<name>spring-boot-jpa-and-join-example</name>
 	<description>Spring Boot JPA connection and join example</description>
 	
