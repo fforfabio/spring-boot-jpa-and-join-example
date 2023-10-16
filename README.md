@@ -6,7 +6,7 @@
   - [Models](#models)
   - [Repositories](#repositories)
   - [Controllers](#controllers)
-  - [application.properties](#application.properties)
+  - [application.properties](#application-properties)
   - [Execution](#execution)
 
 ***
