@@ -13,6 +13,6 @@ public class SpringBootJpaConnectionApplication {
 	private static final Logger logger = LogManager.getLogger(Speaker.class.getName());
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootJpaConnectionApplication.class, args);
-		logger.debug("Project start");
+		logger.debug("Project started!!!");
 	}
 }
