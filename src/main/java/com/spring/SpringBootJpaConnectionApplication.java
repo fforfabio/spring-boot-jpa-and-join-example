@@ -14,6 +14,6 @@ public class SpringBootJpaConnectionApplication {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootJpaConnectionApplication.class, args);
-		logger.debug("Project started!!!");
+		logger.debug("Project started!!!"); 
 	}
 }
