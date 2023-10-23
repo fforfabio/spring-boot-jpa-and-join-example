@@ -46,7 +46,19 @@ Finally there is an `application.properties` for the various project properties,
 ### Models
 Models are represented by tables that exist on SQL Server. Within each model the necessary attributes must be present, which will then be the columns of the tables, the constructors and the getter and setter methods.  
 Each attribute can have annotations to specify constraints on how JPA should create table columns.  
-To join two models it is necessary to specify in at least one of the two an object representing the second, annotating it with the type of relationship that must be present between them (1:1, 1:many, ...) and specifying the constraint between the attributes of the two models, i.e. the foreign key. (ex: In Speaker.java there is the list of all the tutorials held by the same, annotated with `@OneToMany`)  
+To join two models it is necessary to understand which type of relationship there is between them (1:1, 1:many, ...), if it is unidirectional or bidirectional, and then specifying the constraint between the attributes of the two models, i.e. the foreign key. (**ex:** In **Speaker.java** there is the list of all the tutorials held by the same, annotated with `@OneToMany`).  
+
+For the `@OneToMany` annotation and a unidirectional relationship it is necessary to:
+- Annotate `@OneToMany` with the attribute inside the proper class (in this example is the attribute speakerTutorials inside Speaker); 
+- Annotate with `@JoinColumn` the attribute inside the proper class (in this example is the attribute speakerTutorials inside Speaker); 
+- Inside the `@JoinColumn` set the **name** attribute, that is the foreign key inside the other entity (in this example is speaker_id inside Tutorial). 
+
+For the `@OneToMany` annotation and a bidirectional relationship it is necessary to:  
+- Annotate with `@ManyToOne` the owning side of a bidirectional association, that is where the foreign key is;
+- Annotate with `@JoinColumn` the attribute inside the owning side of a bidirectional association;
+- Annotate with `@OneToMany` the inverse side of a bidirectional association;
+- Inside the `@OneToMany` annotation set the **mappedBy** attribute, that is the name of the association-mapping attribute on the owning side.  
+An **example** is the one present inside the **Talk** and **Room** entities.
 
 ### Repositories
 Each model will have its own repository which will have to extend `JpaRepository<T, ID>`.  

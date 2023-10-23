@@ -5,22 +5,23 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.spring.mssql.models.Room;
 import com.spring.mssql.models.Speaker;
-import com.spring.mssql.models.Tutorial;
+import com.spring.mssql.models.Talk;
 import com.spring.mssql.repository.SpeakerRepository;
-import com.spring.mssql.repository.TutorialRepository;
+import com.spring.mssql.repository.TalkRepository;
 
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SpringBootSqlServerApplicationTests {
 
-	TutorialRepository tutorialRepository;
+	TalkRepository tutorialRepository;
 
 	SpeakerRepository speakerRepository;
 	
 	// With this constructor we will avoid the use of the @Autowired annotation
-	public SpringBootSqlServerApplicationTests(TutorialRepository tutorialRepository, SpeakerRepository speakerRepository) {
+	public SpringBootSqlServerApplicationTests(TalkRepository tutorialRepository, SpeakerRepository speakerRepository) {
 			this.tutorialRepository = tutorialRepository;
 			this.speakerRepository = speakerRepository;
 	}
@@ -49,9 +50,9 @@ class SpringBootSqlServerApplicationTests {
 	@Test
 	@Order(3)
 	public void saveTutorial() {
-		Tutorial tutorial = new Tutorial("Test in JUnit", "How to run a JUnit test", true, 1);
-		Tutorial save = tutorialRepository.save(tutorial);
-		Optional<Tutorial> tutorialById = tutorialRepository.findById(save.getId());
+		Talk tutorial = new Talk("Test in JUnit", "How to run a JUnit test", true, 1, new Room());
+		Talk save = tutorialRepository.save(tutorial);
+		Optional<Talk> tutorialById = tutorialRepository.findById(save.getId());
 		assert(tutorialById.isPresent());
 		tutorialRepository.delete(tutorial);
 	}
@@ -59,9 +60,9 @@ class SpringBootSqlServerApplicationTests {
 	@Test
 	@Order(4)
 	public void checkTutorialEntity() {
-		Tutorial tutorial = new Tutorial("Test in JUnit part 2", "How to run a JUnit test part 2", false, 2);
-		Tutorial save = tutorialRepository.save(tutorial);
-		Optional<Tutorial> tutorialById = tutorialRepository.findById(save.getId());
+		Talk tutorial = new Talk("Test in JUnit part 2", "How to run a JUnit test part 2", false, 2, new Room());
+		Talk save = tutorialRepository.save(tutorial);
+		Optional<Talk> tutorialById = tutorialRepository.findById(save.getId());
 		assertEquals("Test in JUnit part 2", tutorialById.get().getTitle(), "The title of the tutorial must be 'Test in JUnit part 2'");
 		assertEquals("How to run a JUnit test part 2", tutorialById.get().getDescription(), "The description of the tutorial must be 'How to run a JUnit test part 2'");
 		assertEquals(false, tutorialById.get().isPublished(), "The tutorial must NOT be published, but it is.");

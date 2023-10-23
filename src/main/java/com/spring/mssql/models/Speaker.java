@@ -91,12 +91,18 @@ public class Speaker {
 	private int age;
 
 	/* OneToMany relationship. 
-	Each speaker has the list of tutorials taken by him.
-	FetchType.LAZY -> the list of tutorials will be retrieve only on request.
+	Each speaker has the list of talks taken by him.
+	FetchType.LAZY -> the list of talks will be retrieve only on request.
 	*/
 	@OneToMany(fetch = FetchType.LAZY)
+	/*
+	 * Unidirectional relationship between Speaker entity
+	 * and Talk entity. Inside this last one there is
+	 * a speaker_id attribute that represent the foreign key.
+	 * If the name is not set, it assume the default value.
+	 */
 	@JoinColumn(name = "speaker_id", referencedColumnName = "id")
-	private List<Tutorial> speakerTutorials;
+	private List<Talk> speakerTalk;
 
 	
 	/* With standard JPA, static fields are not persisted, and final fields are not persisted too. */
@@ -159,12 +165,12 @@ public class Speaker {
 		this.lastName = lastName;
 	}
 	
-	public List<Tutorial> getSpeakerTutorials() {
-		return speakerTutorials;
+	public List<Talk> getSpeakerTalks() {
+		return speakerTalk;
 	}
 
-	public void setSpeakerTutorials(List<Tutorial> speakerTutorials) {
-		this.speakerTutorials = speakerTutorials;
+	public void setSpeakerTutorials(List<Talk> speakerTalks) {
+		this.speakerTalk = speakerTalks;
 	}
 
 	public int getAge() {

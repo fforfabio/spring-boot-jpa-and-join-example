@@ -5,16 +5,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.spring.mssql.models.Tutorial;
+import com.spring.mssql.models.Talk;
 
 
 @Repository
-public interface TutorialRepository extends JpaRepository<Tutorial, Long> {
+public interface TalkRepository extends JpaRepository<Talk, Long> {
 	
-	List<Tutorial> findByPublished(boolean published);
-  	List<Tutorial> findByTitleContaining(String title);
+	List<Talk> findByPublished(boolean published);
+  	List<Talk> findByTitleContaining(String title);
   	
   	// Call a user defined function in the dbJoinExample database.
  	@Query(value = "SELECT * from dbo.getTutorialsWithFunction()", nativeQuery = true)
- 	public List<Tutorial> getAllTutorialsWithFunction();
+ 	public List<Talk> getAllTutorialsWithFunction();
 }
