@@ -1,4 +1,4 @@
-package com.spring.mssql.controller;
+package com.spring.mssql.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,16 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.mssql.models.Room;
 import com.spring.mssql.models.Talk;
-import com.spring.mssql.repository.RoomRepository;
-import com.spring.mssql.repository.SpeakerRepository;
-import com.spring.mssql.repository.TalkRepository;
+import com.spring.mssql.repositories.RoomRepository;
+import com.spring.mssql.repositories.SpeakerRepository;
+import com.spring.mssql.repositories.TalkRepository;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
 /**
- * This is the controller for the Talk class, 
+ * This is the controller for the 
+ * {@link com.spring.mssql.models.Talk Talk} class, 
  * where all the endpoints of this entity are implemented.
  * To make it a controller the class must be annotated with
  * {@link org.springframework.web.bind.annotation.ReastController @RestController}.
@@ -54,7 +55,7 @@ public class TalkController {
 	
 	/**
 	 * To perform a call to a query declared inside 
-	 * the {@link com.spring.mssql.repository.TalkRepository TalkRepository} 
+	 * the {@link com.spring.mssql.repositories.TalkRepository TalkRepository} 
 	 * we must have a variable that will link us to the 
 	 * repository itself.
 	 * @since 1.0.0
@@ -65,7 +66,7 @@ public class TalkController {
 	
 	/**
 	 * To perform a call to a query declared inside 
-	 * the {@link com.spring.mssql.repository.SpeakerRepository SpeakerRepository} 
+	 * the {@link com.spring.mssql.repositories.SpeakerRepository SpeakerRepository} 
 	 * we must have a variable that will link us to the 
 	 * repository itself.
 	 * @since 1.0.0
@@ -76,7 +77,7 @@ public class TalkController {
 
 	/**
 	 * To perform a call to a query declared inside 
-	 * the {@link com.spring.mssql.repository.RoomRepository RoomRepository} 
+	 * the {@link com.spring.mssql.repositories.RoomRepository RoomRepository} 
 	 * we must have a variable that will link us to the 
 	 * repository itself.
 	 * @since 1.0.0
@@ -99,11 +100,10 @@ public class TalkController {
 	
 
 	/**
-	  * @RequestParam will retrieve the parameter from the url of the request.
-	  * Example: http://localhost:8080/api/tutorials?title=example -> the query will return all the talks
-	  * with example in the title.
-	  * required = false indicates that the title is an optional parameter.
-	  **/
+	 * Method that will retrieve all the talks.
+	 * @since 1.0.0
+	 * @author fforfabio 
+	 **/
 	@GetMapping("/talks")
 	public ResponseEntity<List<Talk>> getAllTalks(@RequestParam(required = false) String title) {
 		try {
@@ -129,7 +129,7 @@ public class TalkController {
 	 * {@link org.springframework.web.bind.annotation.PathVariable @PathVariable}
 	 * @return {@link org.springframework.lang.Nullable.HttpStatus#CREATED 201}
 	 * and the talk if its identifier is present into the database. Otherwise
-	 * {@link org.springframework.lang.Nullable.HttpStatus#NOT_FOUND 404}
+	 * {@link org.springframework.lang.Nullable.HttpStatus#NO_CONTENT 204}
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -141,22 +141,24 @@ public class TalkController {
 		Optional<Talk> talkData = talkRepository.findById(id);
 
 		if (talkData.isPresent()) {
-			// Return the tutorial
+			// Return the talk
 			return new ResponseEntity<>(talkData.get(), HttpStatus.OK);
 		} else {
-			// Return 404 if no tutorial is found
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			// Return 204 if no talk is found
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 	}
 
 	
 	/**
+	 * @param speakerId Id of the Speaker who held the talk.
+	 * @param roomId Id of the room where the talk has been taken.
 	 * @param talk to save into the database as a 
 	 * {@link org.springframework.web.bind.annotation.RequestBody @RequestBody}
 	 * @return {@link org.springframework.lang.Nullable.HttpStatus#CREATED 201}
-	 * and the tutorial if the save operation is succeed. Otherwise
-	 * {@link org.springframework.lang.Nullable.HttpStatus#NO_CONTENT 204} or
+	 * and the talk if the save operation is succeed. Otherwise
 	 * {@link org.springframework.lang.Nullable.HttpStatus#INTERNAL_SERVER_ERROR 500}
+	 * @throws ResourceNotFoundException if the Room or the Speaker are not found.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -166,24 +168,31 @@ public class TalkController {
 	public ResponseEntity<Talk> createTalk(@PathVariable(value = "speakerId") Long speakerId,
 			@PathVariable(value = "roomId") Long roomId, @RequestBody Talk talk) {
 		try {
-			if(speakerRepository.findById(speakerId) != null && roomRepository.findById(roomId) != null) {
-				Room r = roomRepository.findById(roomId).get();
-				
-				talk.setSpeaker_id(speakerId);
-				talk.setRoom(r);
-				
-				talkRepository.save(talk);
-				
-				return new ResponseEntity<>(talk, HttpStatus.CREATED);
+			if(speakerRepository.findById(speakerId).isPresent()) {
+				if(roomRepository.findById(roomId).isPresent()) {
+					Room r = roomRepository.findById(roomId).get();
+
+					talk.setSpeaker_id(speakerId);
+					talk.setRoom(r);
+
+					talkRepository.save(talk);
+
+					return new ResponseEntity<>(talk, HttpStatus.CREATED);
+				}
+				else
+					throw new ResourceNotFoundException("Not found Room with id = " + roomId);
 			}
-			throw new ResourceNotFoundException("Not found Speaker with id = " + speakerId + " or room with id = " + roomId);
+			else
+				throw new ResourceNotFoundException("Not found Speaker with id = " + speakerId);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	
 	/**
+	 * Method that will update a specific talk.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -208,12 +217,14 @@ public class TalkController {
 
 	
 	/**
+	 * Method that will delete a specific talk.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
 	@DeleteMapping("/talks/{id}")
 	// @PathVarible will retrieve the parameter from the url
-	public ResponseEntity<HttpStatus> deleteTalk(@Parameter(description = "The id of the talk to delete", required = true)@PathVariable("id") long id) {
+	public ResponseEntity<HttpStatus> deleteTalk(
+			@Parameter(description = "The id of the talk to delete", required = true)@PathVariable("id") long id) {
 		try {
 			talkRepository.deleteById(id);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -224,6 +235,7 @@ public class TalkController {
 
 	
 	/**
+	 * Method that will delete all the talks.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -240,6 +252,7 @@ public class TalkController {
 
 	
 	/**
+	 * Method that will return all the published Talks.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -259,13 +272,15 @@ public class TalkController {
 	
 	
 	/**
+	 * Method that will return all the Talks inside
+	 * the database with a user defined function.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
 	@GetMapping("/talkFunction")
-	public ResponseEntity<List<Talk>> getAllTalkss() {
+	public ResponseEntity<List<Talk>> getAllTalks() {
 		try {
-			List<Talk> talks = talkRepository.getAllTutorialsWithFunction();
+			List<Talk> talks = talkRepository.getAllTalksWithFunction();
 
 			if (talks.isEmpty()) {
 				return new ResponseEntity<>(talks, HttpStatus.NO_CONTENT);

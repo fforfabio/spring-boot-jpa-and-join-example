@@ -9,6 +9,21 @@ import org.hibernate.annotations.OnDeleteAction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
+/**
+ * This class represent the talks table.
+ * <br><br>
+ * Each Talk is associated with a 
+ * {@link com.spring.mssql.models.Room Room}
+ * in a bidirectional one-to-many relationship.
+ * Each Room could have host more Talks, while each 
+ * Talk could be taken in only one Room.
+ * To perform this operation we have a 
+ * {@link Talk#room room} attribute inside 
+ * this class, which will store the Room where
+ * the Talk has been taken.
+ * @since 1.0.0
+ * @author Marchetti Fabio
+ **/
 @Entity
 @Table(name = "talks")
 public class Talk {
@@ -29,12 +44,14 @@ public class Talk {
 	@NotNull
 	private long speaker_id;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	/*
+	/**
 	 * Our Talk entity will have a foreign key column 
-	 * named talk_id referring to the primary attribute 
-	 * id of our Room entity.
-	 */
+	 * named room_id (specified inside the @JoinColumn)
+	 * referring to the primary attribute id of our Room entity.
+	 * @since 1.0.0
+ 	 * @author fforfabio
+	 **/
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "room_id", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JsonIgnore

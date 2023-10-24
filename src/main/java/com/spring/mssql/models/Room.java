@@ -11,6 +11,21 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
+/**
+ * This class represent the rooms table.
+ * <br><br>
+ * Each room is associated with a 
+ * {@link com.spring.mssql.models.Talk Talk}
+ * in a bidirectional one-to-many relationship.
+ * Each Room could have host more Talk, while each 
+ * Talk could be taken in only one Room.
+ * To perform this operation we have a 
+ * {@link Room#talks talks} attribute inside 
+ * this class, which will store all the Talks held
+ * in this Room.
+ * @since 1.0.0
+ * @author fforfabio
+ **/
 @Entity
 @Table(name = "rooms")
 public class Room {
@@ -26,14 +41,16 @@ public class Room {
 	
 	private int roomFloor;
 	
-	/*
+	/**
 	 * The value of mappedBy is the name of the association-mapping 
 	 * attribute on the owning side, so in the Talk class because
 	 * it own the foreign key. It is necessary for bidirectional 
 	 * relationships.
-	 */
+	 * @since 1.0.0
+ 	 * @author fforfabio
+	 **/
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
-	private List<Talk> talk;
+	private List<Talk> talks;
 
 	
 	public Room() {}
@@ -45,6 +62,8 @@ public class Room {
 		this.roomFloor = roomFloor;
 	}
 
+	
+	// Getter and setter
 	public long getId() {
 		return id;
 	}
@@ -77,17 +96,17 @@ public class Room {
 		this.roomFloor = roomFloor;
 	}
 
-	public List<Talk> getTalk() {
-		return talk;
+	public List<Talk> getTalks() {
+		return talks;
 	}
 
-	public void setTalk(List<Talk> talk) {
-		this.talk = talk;
+	public void setTalks(List<Talk> talks) {
+		this.talks = talks;
 	}
 
 	@Override
 	public String toString() {
 		return "Room [id=" + id + ", roomName=" + roomName + ", roomCapacity=" + roomCapacity + ", roomFloor="
-				+ roomFloor + ", talk=" + talk + "]";
+				+ roomFloor + ", talks=" + talks + "]";
 	}
 }

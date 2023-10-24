@@ -6,24 +6,39 @@ import javax.validation.constraints.NotNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.spring.mssql.dto.speakerTutorialsDTO;
+import com.spring.mssql.dto.SpeakerTalksDTO;
 
 
+/**
+ * This class represent the speakers table.
+ * <br><br>
+ * Each Speaker is associated with a 
+ * {@link com.spring.mssql.models.Talk Talk}
+ * in a unidirectional one-to-many relationship.
+ * Each Speaker could have more Talks, while each 
+ * Talk could be taken by a Speaker.
+ * To perform this operation we have a 
+ * {@link Speaker#speakerTalks speakerTalks} attribute inside 
+ * this class, which will store all the
+ * talks held by a Speaker.
+ * @since 1.0.0
+ * @author fforfabio
+ **/
 @NamedNativeQueries(value = {
-	@NamedNativeQuery(name = "Speaker.getSpeakerTutorialsWithJoinDTONativeQuery",
-		query = "SELECT s.last_name AS last, t.title AS title, t.description AS descr, s.id AS sID, t.id AS tID "
-				+ "FROM speakers s JOIN tutorials t ON s.id = t.speaker_id "
+	@NamedNativeQuery(name = "Speaker.getSpeakerTalksWithJoinDTONativeQuery",
+		query = "SELECT s.lastName AS last, t.title AS title, t.description AS descr, s.id AS sID, t.id AS tID "
+				+ "FROM speakers s JOIN talks t ON s.id = t.speaker_id "
 				+ "WHERE t.speaker_id = ?1",
-		resultSetMapping = "speakerTutorialsDTO"),
+		resultSetMapping = "speakerTalksDTO"),
 	
 	@NamedNativeQuery(name = "Speaker.getAllJoinDTONativeQuery",
-	query = "SELECT s.last_name AS last, t.title AS title, t.description AS descr, s.id AS sID, t.id AS tID "
-			+ "FROM speakers s, tutorials t "
+	query = "SELECT s.lastName AS last, t.title AS title, t.description AS descr, s.id AS sID, t.id AS tID "
+			+ "FROM speakers s, talks t "
 			+ "WHERE s.id = t.speaker_id",
-	resultSetMapping = "speakerTutorialsDTO"),
+	resultSetMapping = "speakerTalksDTO"),
 
 	@NamedNativeQuery(name = "Speaker.getSpeakersByFirstName",
-	query = "SELECT s.last_name AS last, s.id AS sID "
+	query = "SELECT s.lastName AS last, s.id AS sID "
 			+ "FROM speakers s "
 			+ "WHERE s.first_name = ?1",
 	resultSetMapping = "speaker"),
@@ -34,21 +49,21 @@ import com.spring.mssql.dto.speakerTutorialsDTO;
 			+ "WHERE s.first_name = ?1",
 	resultSetMapping = "speaker"),*/
 	
-	@NamedNativeQuery(name = "Speaker.getTutorialsCount",
-	query = "SELECT s.last_name AS last, s.id AS sID, COUNT(t.id) AS numTutorials, COUNT(NULLIF(t.published, 0)) AS publishedTutorials "
-			+ "FROM speakers s, tutorials t "
+	@NamedNativeQuery(name = "Speaker.getTalksCount",
+	query = "SELECT s.lastName AS last, s.id AS sID, COUNT(t.id) AS numTalks, COUNT(NULLIF(t.published, 0)) AS publishedTalks "
+			+ "FROM speakers s, talks t "
 			+ "WHERE s.id = t.speaker_id AND t.id IN( "
 				+ "SELECT t1.id "
-				+ "FROM tutorials t1 "
+				+ "FROM talks t1 "
 				+ "WHERE t1.title LIKE CONCAT(?1, '%')) "
 				//+ "WHERE t1.title LIKE '[:titleLike]%') "
-			+ "GROUP BY s.id, s.last_name "
+			+ "GROUP BY s.id, s.lastName "
 			+ "HAVING COUNT(t.id) >= 1",
-	resultSetMapping = "speakerTutorialsDTOMapping")})
+	resultSetMapping = "speakerTalksDTOMapping")})
 
 @SqlResultSetMappings(value = {
-	@SqlResultSetMapping(name = "speakerTutorialsDTO",
-	   classes = @ConstructorResult(targetClass = speakerTutorialsDTO.class,
+	@SqlResultSetMapping(name = "speakerTalksDTO",
+	   classes = @ConstructorResult(targetClass = SpeakerTalksDTO.class,
 	                                columns = {@ColumnResult(name = "last"),
 	                                           @ColumnResult(name = "title"),
 	                                           @ColumnResult(name = "descr"),
@@ -66,12 +81,12 @@ import com.spring.mssql.dto.speakerTutorialsDTO;
 	                    @FieldResult(name = "lastName", column = "last"),
 	                    @FieldResult(name = "id", column = "sId")})),*/
 	
-	@SqlResultSetMapping(name = "speakerTutorialsDTOMapping",
-	        		classes = @ConstructorResult(targetClass = speakerTutorialsDTO.class,
+	@SqlResultSetMapping(name = "speakerTalksDTOMapping",
+	        		classes = @ConstructorResult(targetClass = SpeakerTalksDTO.class,
                     columns = {@ColumnResult(name = "last"),
                                @ColumnResult(name = "sID", type = long.class),
-                               @ColumnResult(name = "numTutorials", type = int.class),
-                               @ColumnResult(name = "publishedTutorials", type = int.class)}))})
+                               @ColumnResult(name = "numTalks", type = int.class),
+                               @ColumnResult(name = "publishedTalks", type = int.class)}))})
 @Entity
 @Table(name = "speakers")
 public class Speaker {
@@ -90,17 +105,19 @@ public class Speaker {
 	@Column(nullable = true)
 	private int age;
 
-	/* OneToMany relationship. 
-	Each speaker has the list of talks taken by him.
-	FetchType.LAZY -> the list of talks will be retrieve only on request.
-	*/
-	@OneToMany(fetch = FetchType.LAZY)
-	/*
+	/**
 	 * Unidirectional relationship between Speaker entity
 	 * and Talk entity. Inside this last one there is
 	 * a speaker_id attribute that represent the foreign key.
 	 * If the name is not set, it assume the default value.
-	 */
+	 * <br>
+	 * Each speaker has the list of talks taken by him.
+	 * FetchType.LAZY means that the list of talks will be 
+	 * retrieve only on request.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
+	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "speaker_id", referencedColumnName = "id")
 	private List<Talk> speakerTalk;
 
@@ -118,6 +135,8 @@ public class Speaker {
 	 * @param firstName of the speaker
 	 * @param lastName of the speaker
 	 * @param age of the speaker
+	 * @since 1.0.0
+ 	 * @author Marchetti Fabio
 	 **/
 	public Speaker(String firstName, String lastName, int age) {
 		this.firstName = firstName;
@@ -130,6 +149,8 @@ public class Speaker {
 	 * Constructor for query getSpeakersByFirstName
 	 * @param lastName of the speaker
 	 * @param id of the speaker
+	 * @since 1.0.0
+ 	 * @author Marchetti Fabio
 	 **/
 	public Speaker(String lastName, long id) {
 		  this.lastName = lastName;
@@ -169,7 +190,7 @@ public class Speaker {
 		return speakerTalk;
 	}
 
-	public void setSpeakerTutorials(List<Talk> speakerTalks) {
+	public void setSpeakerTalks(List<Talk> speakerTalks) {
 		this.speakerTalk = speakerTalks;
 	}
 
