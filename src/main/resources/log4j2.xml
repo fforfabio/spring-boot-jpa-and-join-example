@@ -21,7 +21,7 @@
         </File>
         
         <RollingFile name="Models" fileName="C:/Users/user_name/Downloads/speaker.log"
-                     filePattern="C:/Users/marchetti/Downloads/speaker-%d{yyyy-MM-dd}.log.gz">
+                     filePattern="C:/Users/fforfabio/Downloads/speaker-%d{yyyy-MM-dd}.log.gz">
             <PatternLayout>
                 <Pattern>%d{dd-MM-yyyy HH:mm:ss,SSS} %5p %c{1}:%L - %m%n</Pattern>
             </PatternLayout>
@@ -38,7 +38,7 @@
         </RollingFile>
         
         <RollingFile name="debug" fileName="C:/Users/user_name/Downloads/debug.log"
-                     filePattern="C:/Users/marchetti/Downloads/debug-%d{yyyy-MM-dd}.log.gz">
+                     filePattern="C:/Users/fforfabio/Downloads/debug-%d{yyyy-MM-dd}.log.gz">
             <PatternLayout>
                 <Pattern>%d{dd-MM-yyyy HH:mm:ss,SSS} %5p %c{1}:%L - %m%n</Pattern>
             </PatternLayout>
