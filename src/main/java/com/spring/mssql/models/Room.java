@@ -30,15 +30,38 @@ import javax.persistence.Table;
 @Table(name = "rooms")
 public class Room {
 
-	// Columns of the model Talk
+	// Columns of the model Room
+	/**
+	 * Identifier of the room.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
+	
+	/**
+	 * Name of the room.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	private String roomName;
 	
+	
+	/**
+	 * Capacity of the room.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	private long roomCapacity;
 	
+	
+	/**
+	 * Floor of the room.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	private int roomFloor;
 	
 	/**
@@ -55,8 +78,15 @@ public class Room {
 	
 	public Room() {}
 	
+	/**
+	 * Constructor
+	 * @param roomName the name of the room
+	 * @param roomCapacity the capacity of the room
+	 * @param roomFloor the floor of the room
+	 * @since 1.0.0
+ 	 * @author fforfabio
+	 **/
 	public Room(String roomName, long roomCapacity, int roomFloor) {
-		super();
 		this.roomName = roomName;
 		this.roomCapacity = roomCapacity;
 		this.roomFloor = roomFloor;
@@ -103,6 +133,63 @@ public class Room {
 	public void setTalks(List<Talk> talks) {
 		this.talks = talks;
 	}
+	
+	
+	// Service methods
+	/**
+	 * This method is used to update the reference 
+	 * between {@link Room} and {@link Talk}.
+	 * It will call in order the 
+	 * {@link Room#removeTalk(Talk)} and the
+	 * {@link Room#addTalk(Talk)} methods.
+	 * @since 1.0.1
+	 * @author fforfabio
+	 **/
+	public void updateTalk(Talk talk) {
+		this.removeTalk(talk);
+		this.addTalk(talk);
+	}
+	 
+	/**
+	 * This method perform two operations:
+	 * <ol>
+	 * <li>
+	 * Remove the talk from the {@link Room#talks talks}
+	 * list of this room;
+	 * </li>
+	 * <li>
+	 * Set the room for the talk to null.
+	 * </li>
+	 * </ol>
+	 * @param talk to update
+	 * @since 1.0.1
+	 * @author fforfabio
+	 **/
+	private void removeTalk(Talk talk) {
+		talks.remove(talk);
+		talk.setRoom(null);
+	}
+	
+	/**
+	 * This method perform two operations:
+	 * <ol>
+	 * <li>
+	 * Add the talk into the {@link Room#talks talks}
+	 * list of this room;
+	 * </li>
+	 * <li>
+	 * Set this room as the room where the talk is taken.
+	 * </li>
+	 * </ol>
+	 * @param talk to update
+	 * @since 1.0.1
+	 * @author fforfabio
+	 **/
+	private void addTalk(Talk talk) {
+        talks.add(talk);
+        talk.setRoom(this);
+    }
+	
 
 	@Override
 	public String toString() {

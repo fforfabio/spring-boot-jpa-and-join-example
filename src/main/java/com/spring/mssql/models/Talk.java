@@ -22,27 +22,44 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * this class, which will store the Room where
  * the Talk has been taken.
  * @since 1.0.0
- * @author Marchetti Fabio
+ * @author fforfabio
  **/
 @Entity
 @Table(name = "talks")
 public class Talk {
 
 	// Columns of the model Talk
+	/**
+	 * Identifier of the talk.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	/**
+	 * Title of the talk.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	@NotNull
 	private String title;
 
+	/**
+	 * Description of the talk.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	private String description;
 
+	/**
+	 * Flag to see if the talk has been published.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	private boolean published;
-  
-	@Column(nullable = false)
-	@NotNull
-	private long speaker_id;
+	
 	
 	/**
 	 * Our Talk entity will have a foreign key column 
@@ -68,12 +85,13 @@ public class Talk {
 	 * @param published if the talk is published
 	 * @param speakerId the id of the speaker of the talk
 	 * @param room the room where the talk will be taken
+	 * @since 1.0.0
+ 	 * @author fforfabio
 	 **/
-	public Talk(String title, String description, boolean published, long speakerId, Room room) {
+	public Talk(String title, String description, boolean published, Room room) {
 	    this.title = title;
 	    this.description = description;
 	    this.published = published;
-	    this.speaker_id = speakerId;
 	    this.room = room;
 	}
 
@@ -96,14 +114,6 @@ public class Talk {
 
 	public String getDescription() {
 	  	return description;
-	}
-
-	public long getSpeaker_id() {
-	  	return speaker_id;
-	}
-
-	public void setSpeaker_id(long speakerId) {
-		 this.speaker_id = speakerId;
 	}
 	  
 	public void setDescription(String description) {
@@ -130,7 +140,7 @@ public class Talk {
 	public String toString() {
 		String textPublished = (published) ? " is already available." : " is not available.";
 		return "Talk number " + id + ", with title \"" + title + "\" [description = \"" + description + "\"] "
-				+ "hold by Speaker " + speaker_id + " in room " + room + textPublished;
+				+ "hold in room " + room + textPublished;
 	}
 
 }

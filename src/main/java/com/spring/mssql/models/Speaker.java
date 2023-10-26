@@ -91,17 +91,37 @@ import com.spring.mssql.dto.SpeakerTalksDTO;
 @Table(name = "speakers")
 public class Speaker {
 	
-	// Columns of the model speaker
+	// Columns of the model Speaker
+	/**
+	 * Identifier of the speaker.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
+	/**
+	 * First name of the speaker.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	@NotNull
 	private String firstName;
 
+	/**
+	 * Last name of the speaker.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	@NotNull
 	private String lastName;
 	
+	/**
+	 * Age of the speaker.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	@Column(nullable = true)
 	private int age;
 
@@ -136,7 +156,7 @@ public class Speaker {
 	 * @param lastName of the speaker
 	 * @param age of the speaker
 	 * @since 1.0.0
- 	 * @author Marchetti Fabio
+ 	 * @author fforfabio
 	 **/
 	public Speaker(String firstName, String lastName, int age) {
 		this.firstName = firstName;
@@ -150,7 +170,7 @@ public class Speaker {
 	 * @param lastName of the speaker
 	 * @param id of the speaker
 	 * @since 1.0.0
- 	 * @author Marchetti Fabio
+ 	 * @author fforfabio
 	 **/
 	public Speaker(String lastName, long id) {
 		  this.lastName = lastName;
