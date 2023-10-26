@@ -50,14 +50,14 @@ Finally there is an `application.properties` for the various project properties,
 
 ## Project functioning
 ### Models
-Models are represented by tables that exist on SQL Server. Within each model the necessary attributes must be present, which will then be the columns of the tables, the constructors and the getter and setter methods.  
+Models are represented by tables that exist on SQL Server. Within each model the necessary attributes must be present, which will then be the columns of the tables, the constructors, the getter and setter methods and any service methods.  
 Each attribute can have annotations to specify constraints on how JPA should create table columns.  
 To join two models it is necessary to understand which type of relationship there is between them (1:1, 1:many, ...), if it is unidirectional or bidirectional, and then specifying the constraint between the attributes of the two models, i.e. the foreign key. (**ex:** In **Speaker.java** there is the list of all the talks held by the same, annotated with `@OneToMany`).  
 
 For the `@OneToMany` annotation and a unidirectional relationship it is necessary to:
 - Annotate with `@OneToMany` the attribute inside the proper class (in this example is the attribute speakerTalks inside Speaker); 
 - Annotate with `@JoinColumn` the attribute inside the proper class (in this example is the attribute speakerTalks inside Speaker); 
-- Inside the `@JoinColumn` set the **name** attribute, that is the foreign key inside the other entity (in this example is speaker_id inside Talk). 
+- Inside the `@JoinColumn` set the **name** attribute, that is the foreign key inside the other entity (in this example the column that will be generated on the _talks_ table will have the name _speaker\_id_). 
 
 For the `@OneToMany` annotation and a bidirectional relationship it is necessary to:  
 - Annotate with `@ManyToOne` the owning side of a bidirectional relationship, that is where the foreign key is;
