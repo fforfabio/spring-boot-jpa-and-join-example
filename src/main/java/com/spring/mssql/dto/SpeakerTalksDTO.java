@@ -19,12 +19,53 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class SpeakerTalksDTO {
 	
+	/**
+	 * Identifier of the speaker.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	private long speakerId;
+	
+	/**
+	 * Last name of the speaker.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	private String speakerLastName;
+	
+	/**
+	 * Identifier of the talk.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	private long talkId;
+	
+	/**
+	 * Title of the talk.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	private String talkTitle;
+	
+	/**
+	 * Description of the talk.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	private String talkDescription;
+	
+	/**
+	 * Number of talks for a speaker.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	private int numTalks;
+	
+	/**
+	 * Talks published by a speaker.
+	 * @since 1.0.0
+	 * @author fforfabio
+	 **/
 	private int publishedTalks;
 	
 	
