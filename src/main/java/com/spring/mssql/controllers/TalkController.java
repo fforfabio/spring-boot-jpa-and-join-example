@@ -119,6 +119,7 @@ public class TalkController {
 			}
 			return new ResponseEntity<>(talks, HttpStatus.OK);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -162,7 +163,7 @@ public class TalkController {
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
-	@PostMapping("/{speakerId}/{roomId}/talks")
+	@PostMapping("talk/{speakerId}/{roomId}")
 	@ApiResponse(responseCode = "201", description = "Talk created")
 	// @RequestBody will retrieve the parameter from the body of the request
 	public ResponseEntity<Talk> createTalk(@PathVariable(value = "speakerId") Long speakerId,
@@ -172,7 +173,7 @@ public class TalkController {
 				if(roomRepository.findById(roomId).isPresent()) {
 					Room r = roomRepository.findById(roomId).get();
 
-					talk.setSpeaker_id(speakerId);
+					speakerRepository.findById(speakerId).get().getSpeakerTalks().add(talk);
 					talk.setRoom(r);
 
 					talkRepository.save(talk);
@@ -193,25 +194,48 @@ public class TalkController {
 	
 	/**
 	 * Method that will update a specific talk.
-	 * @since 1.0.0
+	 * @since 1.0.1
 	 * @author fforfabio 
 	 **/
-	@PutMapping("/talks/{id}")
+	@PutMapping(value = {"/talksTSR/{talkId}/{speakerId}/{roomId}", "/talksTS/{talkId}/{speakerId}",
+			"/talksTR/{talkId}/{roomId}", "/talks/{talkId}"})
 	// @PathVarible will retrieve the parameter from the url
 	// @RequestBody will retrieve the parameter from the body of the request
-	public ResponseEntity<Talk> updateTalk(@PathVariable("id") long id, @RequestBody Talk talk) {
-		Optional<Talk> talkData = talkRepository.findById(id);
-
-		if (talkData.isPresent()) {
-			Talk _talk = talkData.get();
-			_talk.setTitle(talk.getTitle());
-			_talk.setDescription(talk.getDescription());
-			_talk.setPublished(talk.isPublished());
-			_talk.setSpeaker_id(talk.getSpeaker_id());
-			_talk.setRoom(talk.getRoom());
-			return new ResponseEntity<>(talkRepository.save(_talk), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	public ResponseEntity<Talk> updateTalk(@PathVariable("talkId") long talkId, 
+			@PathVariable(required = false, name = "roomId") Optional<Long> roomId,
+			@PathVariable(required = false, name = "speakerId") Optional<Long> speakerId,
+			@RequestBody Talk talk) {
+		try {
+			Optional<Talk> talkData = talkRepository.findById(talkId);
+			
+			if (talkData.isPresent()) {
+				Talk _talk = talkData.get();
+				
+				// Update the foreign key room_id
+				if(roomId.isPresent())
+					if(roomRepository.findById(roomId.get()).isPresent())
+						roomRepository.findById(roomId.get()).get().updateTalk(_talk);
+				
+				// Update the Talk
+				_talk.setTitle(talk.getTitle());
+				_talk.setDescription(talk.getDescription());
+				_talk.setPublished(talk.isPublished());
+				
+				// Update the foreign_key speaker_Id
+				if(speakerId.isPresent()) {
+					if(speakerRepository.findById(speakerId.get()).isPresent()) {
+						long sId = talkRepository.retrieveSpeakerId(talkId);
+						speakerRepository.findById(sId).get().getSpeakerTalks().remove(_talk);
+						speakerRepository.findById(speakerId.get()).get().getSpeakerTalks().add(_talk);
+					}
+				}
+				return new ResponseEntity<>(talkRepository.save(_talk), HttpStatus.OK);
+			} else {
+				throw new ResourceNotFoundException("Not found Talk with id = " + talkId);
+			}
+		}catch(Exception e) {
+			System.out.println(e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -229,6 +253,7 @@ public class TalkController {
 			talkRepository.deleteById(id);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -245,6 +270,7 @@ public class TalkController {
 			talkRepository.deleteAll();
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
@@ -266,6 +292,7 @@ public class TalkController {
 			}
 			return new ResponseEntity<>(talks, HttpStatus.OK);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -287,6 +314,7 @@ public class TalkController {
 			}
 			return new ResponseEntity<>(talks, HttpStatus.OK);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

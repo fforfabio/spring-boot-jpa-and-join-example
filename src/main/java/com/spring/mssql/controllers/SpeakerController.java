@@ -1,4 +1,4 @@
-package com.spring.mssql.controller;
+package com.spring.mssql.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,18 +13,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.spring.mssql.dto.speakerTutorialsDTO;
+import com.spring.mssql.dto.SpeakerTalksDTO;
 import com.spring.mssql.models.Speaker;
 import com.spring.mssql.models.Talk;
-import com.spring.mssql.repository.SpeakerRepository;
-import com.spring.mssql.repository.TalkRepository;
+import com.spring.mssql.repositories.SpeakerRepository;
+import com.spring.mssql.repositories.TalkRepository;
 
 import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.responses.*;
 
 
 /**
- * This is the controller for the Speaker class, 
+ * This is the controller for the 
+ * {@link com.spring.mssql.models.Speaker Speaker} class, 
  * where all the endpoints of this entity are implemented.
  * To make it a controller the class must be annotated with
  * {@link org.springframework.web.bind.annotation.ReastController @RestController}.
@@ -49,7 +50,7 @@ public class SpeakerController {
 
 	/**
 	 * To perform a call to a query declared inside 
-	 * the {@link com.spring.mssql.repository.TalkRepository TutorialRepository} 
+	 * the {@link com.spring.mssql.repositories.TalkRepository TalkRepository} 
 	 * we must have a variable that will link us to the 
 	 * repository itself.
 	 * @since 1.0.0
@@ -60,7 +61,7 @@ public class SpeakerController {
 	
 	/**
 	 * To perform a call to a query declared inside 
-	 * the {@link com.spring.mssql.repository.SpeakerRepository SpeakerRepository} 
+	 * the {@link com.spring.mssql.repositories.SpeakerRepository SpeakerRepository} 
 	 * we must have a variable that will link us to the 
 	 * repository itself.
 	 * @since 1.0.0
@@ -99,6 +100,7 @@ public class SpeakerController {
 			
 			return new ResponseEntity<>(speakers, HttpStatus.OK);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -139,6 +141,7 @@ public class SpeakerController {
 					new Speaker(speaker.getFirstName(), speaker.getLastName(), speaker.getAge()));
 			return new ResponseEntity<>(_speaker, HttpStatus.CREATED);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -180,7 +183,6 @@ public class SpeakerController {
 				else {
 					List<Talk> sTut = speakerRepository.findById(id).get().getSpeakerTalks();
 					for(Talk tut : sTut) {
-						tut.setSpeaker_id(speakerRepository.findAll().get(0).getId());
 						talkRepository.save(tut);
 					}
 					speakerRepository.deleteById(id);
@@ -189,6 +191,7 @@ public class SpeakerController {
 			}
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -209,6 +212,7 @@ public class SpeakerController {
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -229,6 +233,7 @@ public class SpeakerController {
 			}
 			return new ResponseEntity<>(speaker.stream().collect(Collectors.toMap(Speaker::getId, s -> s)), HttpStatus.OK);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -238,16 +243,17 @@ public class SpeakerController {
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
-	@GetMapping("/speakerTutorialsJoinExampleDTOJPQL")
+	@GetMapping("/speakerTalksJoinExampleDTOJPQL")
 	// @RequestBody will retrieve the parameter from the body of the request
-	public ResponseEntity<List<speakerTutorialsDTO>> getSpeakerTutorialsWithJoinDTOJPQL(@RequestBody String speakerId) {
+	public ResponseEntity<List<SpeakerTalksDTO>> getSpeakerTalksWithJoinDTOJPQL(@RequestBody String speakerId) {
 		try {
-			List<speakerTutorialsDTO> dto = speakerRepository.getSpeakerTutorialsWithJoinDTOJPQL(Long.parseLong(speakerId));
+			List<SpeakerTalksDTO> dto = speakerRepository.getSpeakerTalksWithJoinDTOJPQL(Long.parseLong(speakerId));
 			if (dto.isEmpty()) {
 				return new ResponseEntity<>(dto, HttpStatus.NO_CONTENT);
 			}
 			return new ResponseEntity<>(dto, HttpStatus.OK);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -257,18 +263,19 @@ public class SpeakerController {
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
-	@GetMapping("/speakerTutorialsJoinExampleDTONativeQuery")
+	@GetMapping("/speakerTalksJoinExampleDTONativeQuery")
 	// @RequestBody will retrieve the parameter from the body of the request
-	public ResponseEntity<Map<Long, speakerTutorialsDTO>> getSpeakerTutorialsWithJoinDTONativeQuery(@RequestBody String speakerId) {
+	public ResponseEntity<Map<Long, SpeakerTalksDTO>> getSpeakerTalksWithJoinDTONativeQuery(@RequestBody String speakerId) {
 		try {
-			List<speakerTutorialsDTO> dto = speakerRepository.getSpeakerTutorialsWithJoinDTONativeQuery(Long.parseLong(speakerId));
+			List<SpeakerTalksDTO> dto = speakerRepository.getSpeakerTalksWithJoinDTONativeQuery(Long.parseLong(speakerId));
 			if (dto.isEmpty()) {
-				return new ResponseEntity<>(new HashMap<Long, speakerTutorialsDTO>(), HttpStatus.NO_CONTENT);
+				return new ResponseEntity<>(new HashMap<Long, SpeakerTalksDTO>(), HttpStatus.NO_CONTENT);
 			}
-			return new ResponseEntity<>(dto.stream().collect(Collectors.toMap(speakerTutorialsDTO::getTutorialId,  
+			return new ResponseEntity<>(dto.stream().collect(Collectors.toMap(SpeakerTalksDTO::getTalkId,  
 					Function.identity(), (o1, o2) -> o1, TreeMap::new)),
 					HttpStatus.OK);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -279,14 +286,15 @@ public class SpeakerController {
 	 * @author fforfabio 
 	 **/
 	@GetMapping("/getAllJoinDTONativeQuery")
-	public ResponseEntity<List<speakerTutorialsDTO>> getAllJoinDTONativeQuery() {
+	public ResponseEntity<List<SpeakerTalksDTO>> getAllJoinDTONativeQuery() {
 		try {
-			List<speakerTutorialsDTO> dto = speakerRepository.getAllJoinDTONativeQuery();
+			List<SpeakerTalksDTO> dto = speakerRepository.getAllJoinDTONativeQuery();
 			if (dto.isEmpty()) {
 				return new ResponseEntity<>(dto, HttpStatus.NO_CONTENT);
 			}
 			return new ResponseEntity<>(dto, HttpStatus.OK);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -296,17 +304,18 @@ public class SpeakerController {
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
-	@GetMapping("/getTutorialsCount")
-	public ResponseEntity<List<speakerTutorialsDTO>> getTutorialsCount(@RequestBody(required=false) String titleLike) {
+	@GetMapping("/getTalksCount")
+	public ResponseEntity<List<SpeakerTalksDTO>> getTalksCount(@RequestBody(required=false) String titleLike) {
 		try {
 			if(titleLike == null)
 				titleLike = "";
-			List<speakerTutorialsDTO> dto = speakerRepository.getTutorialsCount(titleLike);
+			List<SpeakerTalksDTO> dto = speakerRepository.getTalksCount(titleLike);
 			if (dto.isEmpty()) {
 				return new ResponseEntity<>(dto, HttpStatus.NO_CONTENT);
 			}
 			return new ResponseEntity<>(dto, HttpStatus.OK);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

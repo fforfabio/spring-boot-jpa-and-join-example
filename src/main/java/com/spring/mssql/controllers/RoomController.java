@@ -90,6 +90,7 @@ public class RoomController {
 			
 			return new ResponseEntity<>(rooms, HttpStatus.OK);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -132,6 +133,7 @@ public class RoomController {
 					new Room(room.getRoomName(), room.getRoomCapacity(), room.getRoomFloor()));
 			return new ResponseEntity<>(_room, HttpStatus.CREATED);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

@@ -34,7 +34,7 @@ import com.spring.mssql.models.Room;
  * For further examples see 
  * {@link com.spring.mssql.controllers.RoomController RoomController}.
  * @since 1.0.0
- * @author Marchetti Fabio
+ * @author fforfabio
  **/
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long>{

@@ -89,8 +89,9 @@ public interface SpeakerRepository extends JpaRepository<Speaker, Long>{
 	 * @author fforfabio
 	 **/ 
 	@Query("SELECT new com.spring.mssql.dto.speakerTalksDTO(s.lastName, t.title, t.description, s.id, t.id) "
-			+ "FROM Speaker s JOIN s.speakerTalks t "
-			+ "WHERE t.speaker_id = ?1")
+			+ "FROM Speaker s "
+			+ "JOIN s.speakerTalks t "
+			+ "WHERE s.id = ?1")
 	public List<SpeakerTalksDTO> getSpeakerTalksWithJoinDTOJPQL(long id);
 	
 	

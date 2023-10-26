@@ -52,6 +52,7 @@ public interface TalkRepository extends JpaRepository<Talk, Long> {
   	 **/
 	List<Talk> findByPublished(boolean published);
 	
+	
 	/**
   	 * Method that perform a query which search for 
   	 * Talks which title contain the parameter
@@ -63,12 +64,31 @@ public interface TalkRepository extends JpaRepository<Talk, Long> {
   	 **/
   	List<Talk> findByTitleContaining(String title);
   	
+  	
   	/**
   	 * Method that perform a query that call a 
   	 * user defined function in the database.
+  	 * @return all the talks inside the talks table.
 	 * @since 1.0.0
 	 * @author fforfabio
   	 **/
  	@Query(value = "SELECT * from dbo.getTalksWithFunction()", nativeQuery = true)
  	public List<Talk> getAllTalksWithFunction();
+ 	
+ 	
+ 	/**
+  	 * Method that perform a query to retrieve
+  	 * the foreign key speaker_id inside the
+  	 * talks table for a specific talk.
+  	 * <br>
+  	 * It is call by the 
+  	 * {@link com.spring.mssql.controllers.TalkController#updateTalk updateTalk}
+  	 * method inside the {@link com.spring.mssql.controllers.TalkController TalkController}.
+  	 * @param talkId the id of the talk to update.
+  	 * @return the id of the speaker who held the talk.
+	 * @since 1.0.1
+	 * @author fforfabio
+  	 **/
+ 	@Query(value = "SELECT t.speaker_id from talks t where t.id = ?1", nativeQuery = true)
+ 	public long retrieveSpeakerId(long talkId);
 }
