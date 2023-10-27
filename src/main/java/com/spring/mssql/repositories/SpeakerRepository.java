@@ -64,7 +64,7 @@ public interface SpeakerRepository extends JpaRepository<Speaker, Long>{
 	/**
 	 * JOIN on DTO with nativeQuery.
 	 * The definition of the query is available on the
-	 * head of the {@link com.suzuki.spring.mssql.models.Speaker Speaker}
+	 * head of the {@link com.spring.mssql.models.Speaker Speaker}
 	 * entity. Just search for this method signature inside
 	 * the name attribute of the @NamedNativeQuery annotation.
 	 * @param firstName of the speaker
@@ -80,7 +80,7 @@ public interface SpeakerRepository extends JpaRepository<Speaker, Long>{
 	/**
 	 * JOIN on DTO with JPQL.
 	 * The definition of the query is available on the
-	 * head of the {@link com.suzuki.spring.mssql.models.Speaker Speaker}
+	 * head of the {@link com.spring.mssql.models.Speaker Speaker}
 	 * entity. Just search for this method signature inside
 	 * the name attribute of the @NamedNativeQuery annotation.
 	 * @param id of the speaker
@@ -98,7 +98,7 @@ public interface SpeakerRepository extends JpaRepository<Speaker, Long>{
 	/**
 	 * JOIN on DTO with nativeQuery.
 	 * The definition of the query is available on the
-	 * head of the {@link com.suzuki.spring.mssql.models.Speaker Speaker}
+	 * head of the {@link com.spring.mssql.models.Speaker Speaker}
 	 * entity. Just search for this method signature inside
 	 * the name attribute of the @NamedNativeQuery annotation.
 	 * @param id of the speaker
@@ -113,7 +113,7 @@ public interface SpeakerRepository extends JpaRepository<Speaker, Long>{
 	/**
 	 * JOIN on DTO with nativeQuery.
 	 * The definition of the query is available on the
-	 * head of the {@link com.suzuki.spring.mssql.models.Speaker Speaker}
+	 * head of the {@link com.spring.mssql.models.Speaker Speaker}
 	 * entity. Just search for this method signature inside
 	 * the name attribute of the @NamedNativeQuery annotation.
 	 * @return The query will return all the speakers with all their talks.
@@ -127,7 +127,7 @@ public interface SpeakerRepository extends JpaRepository<Speaker, Long>{
 	/**
 	 * Complex query with nativeQuery on DTO.
 	 * The definition of the query is available on the
-	 * head of the {@link com.suzuki.spring.mssql.models.Speaker Speaker}
+	 * head of the {@link com.spring.mssql.models.Speaker Speaker}
 	 * entity. Just search for this method signature inside
 	 * the name attribute of the @NamedNativeQuery annotation.
 	 * @param titleLike initial part of the title of the talk

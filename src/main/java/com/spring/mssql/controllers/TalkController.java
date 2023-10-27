@@ -89,6 +89,9 @@ public class TalkController {
 	 * With this constructor we will avoid the use of the
 	 * {@link org.springframework.beans.factory.annotation.Autowired @Autowired} 
 	 * annotation.
+	 * @param talkRepository an instance of {@link com.spring.mssql.repositories.TalkRepository TalkRepository}
+	 * @param speakerRepository an instance of {@link com.spring.mssql.repositories.SpeakerRepository SpeakerRepository}
+	 * @param roomRepository an instance of {@link com.spring.mssql.repositories.RoomRepository RoomRepository}
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -101,6 +104,15 @@ public class TalkController {
 
 	/**
 	 * Method that will retrieve all the talks.
+	 * <br>
+	 * If the title parameter is not null it will
+	 * search for all the talks with a specific
+	 * title (also a substring is allowed).
+	 * <br>
+	 * If the title parameter is null it will return
+	 * all the talks inside the database.
+	 * @param title string (or substring) representing the title of the talk.
+	 * It is non required.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -126,6 +138,7 @@ public class TalkController {
 
 	
 	/**
+	 * Mehod that will search a specific talk.
 	 * @param id of the talk to retrieve as 
 	 * {@link org.springframework.web.bind.annotation.PathVariable @PathVariable}
 	 * @return {@link org.springframework.lang.Nullable.HttpStatus#CREATED 201}
@@ -152,6 +165,8 @@ public class TalkController {
 
 	
 	/**
+	 * Method that will create a new 
+	 * {@link com.spring.mssql.models.Talk Talk}.
 	 * @param speakerId Id of the Speaker who held the talk.
 	 * @param roomId Id of the room where the talk has been taken.
 	 * @param talk to save into the database as a 
@@ -194,6 +209,10 @@ public class TalkController {
 	
 	/**
 	 * Method that will update a specific talk.
+	 * @param talkId id of the talk to update.
+	 * @param roomId optional id of the room where the talk has been taken.
+	 * @param speakerId optional id of the speaker of the talk.
+	 * @param talk an instance of {@link com.spring.mssql.models.Talk Talk}.
 	 * @since 1.0.1
 	 * @author fforfabio 
 	 **/
@@ -211,21 +230,36 @@ public class TalkController {
 			if (talkData.isPresent()) {
 				Talk _talk = talkData.get();
 				
-				// Update the foreign key room_id
-				if(roomId.isPresent())
-					if(roomRepository.findById(roomId.get()).isPresent())
-						roomRepository.findById(roomId.get()).get().updateTalk(_talk);
-				
 				// Update the Talk
 				_talk.setTitle(talk.getTitle());
 				_talk.setDescription(talk.getDescription());
 				_talk.setPublished(talk.isPublished());
 				
-				// Update the foreign_key speaker_Id
+				/*
+				 * To update the fk inside the Talk entity you can
+				 * use two ways.
+				 * The first one is the one used for the room_id, where
+				 * an updateTalk(_talk) method is call.
+				 * The updateTalk method will remove the talk from the list
+				 * of talks taken in that room and will add it to the list
+				 * of the new room.
+				 * The second one is the one used for the speaker_id, where
+				 * are used the .remove() and the .add() method on the list
+				 * of talks retrieve via a getter method getSpeakerTalks()
+				 */
+				// Update the foreign key room_id
+				if(roomId.isPresent())
+					if(roomRepository.findById(roomId.get()).isPresent())
+						roomRepository.findById(roomId.get()).get().updateTalk(_talk);
+				
+				// Update the foreign_key speaker_id
 				if(speakerId.isPresent()) {
 					if(speakerRepository.findById(speakerId.get()).isPresent()) {
+						// Retrieve the old speaker_id value of the talk to update.
 						long sId = talkRepository.retrieveSpeakerId(talkId);
+						// Remove the talk from the list of the old speaker.
 						speakerRepository.findById(sId).get().getSpeakerTalks().remove(_talk);
+						// Add the talk to the list of the new speaker.
 						speakerRepository.findById(speakerId.get()).get().getSpeakerTalks().add(_talk);
 					}
 				}
@@ -242,6 +276,7 @@ public class TalkController {
 	
 	/**
 	 * Method that will delete a specific talk.
+	 * @param id of the talk to delete.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -251,7 +286,7 @@ public class TalkController {
 			@Parameter(description = "The id of the talk to delete", required = true)@PathVariable("id") long id) {
 		try {
 			talkRepository.deleteById(id);
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -278,7 +313,11 @@ public class TalkController {
 
 	
 	/**
-	 * Method that will return all the published Talks.
+	 * Method that will return all the published Talks or
+	 * the Talks that are not been published yet, based on
+	 * the parameter of the
+	 * {@link com.spring.mssql.repositories.TalkRepository#findByPublished(boolean) findByPublished}
+	 * method.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/

@@ -74,6 +74,8 @@ public class SpeakerController {
 	 * With this constructor we will avoid the use of the
 	 * {@link org.springframework.beans.factory.annotation.Autowired @Autowired} 
 	 * annotation.
+	 * @param talkRepository an instance of {@link com.spring.mssql.repositories.TalkRepository TalkRepository}
+	 * @param speakerRepository an instance of {@link com.spring.mssql.repositories.SpeakerRepository SpeakerRepository}
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -84,6 +86,7 @@ public class SpeakerController {
 	
 	
 	/**
+	 * Retrieve all the speakers inside the speakers table.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -107,6 +110,8 @@ public class SpeakerController {
 	
 	
 	/**
+	 * Method that will retrieve a specific speaker.
+	 * @param id of the speaker to search for
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -124,6 +129,8 @@ public class SpeakerController {
 	
 	
 	/**
+	 * Method that will create a new speaker.
+	 * @param speaker an instance of {@link com.spring.mssql.models.Speaker Speaker}
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -148,6 +155,9 @@ public class SpeakerController {
 	
 	
 	/**
+	 * Method that will update a speaker.
+	 * @param id of the speaker to update
+	 * @param speaker an instance of {@link com.spring.mssql.models.Speaker Speaker}
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -169,6 +179,8 @@ public class SpeakerController {
 
 
 	/**
+	 * Method that will delete a speaker.
+	 * @param id of the speaker to delete.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -198,6 +210,7 @@ public class SpeakerController {
 
 	
 	/**
+	 * Method that will delete all the speakers.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -219,6 +232,9 @@ public class SpeakerController {
 	
 	
 	/**
+	 * Method that will search for all the speakers
+	 * with a specific first name.
+	 * @param firstName first name (or a substring) of the speakers to search for.
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -240,6 +256,15 @@ public class SpeakerController {
 	
 	
 	/**
+	 * Method that will perform a join between
+	 * speakers and talks table.
+	 * <br>
+	 * It call the 
+	 * {@link com.spring.mssql.repositories.SpeakerRepository#getSpeakerTalksWithJoinDTOJPQL 
+	 * getSpeakerTalksWithJoinDTOJPQL}
+	 * query inside the
+	 * {@link com.spring.mssql.repositories.SpeakerRepository SpeakerRepository}
+	 * @param speakerId id of the speaker to search for
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -260,6 +285,15 @@ public class SpeakerController {
 	
 	
 	/**
+	 * Method that will perform a join between
+	 * speakers and talks table.
+	 * <br>
+	 * It call the 
+	 * {@link com.spring.mssql.repositories.SpeakerRepository#getSpeakerTalksWithJoinDTONativeQuery 
+	 * getSpeakerTalksWithJoinDTONativeQuery}
+	 * query inside the
+	 * {@link com.spring.mssql.repositories.SpeakerRepository SpeakerRepository}
+	 * @param speakerId id of the speaker to search for
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -282,6 +316,14 @@ public class SpeakerController {
 	
 	
 	/**
+	 * Method that will perform a join between
+	 * speakers and talks table.
+	 * <br>
+	 * It call the 
+	 * {@link com.spring.mssql.repositories.SpeakerRepository#getAllJoinDTONativeQuery 
+	 * getAllJoinDTONativeQuery}
+	 * query inside the
+	 * {@link com.spring.mssql.repositories.SpeakerRepository SpeakerRepository}
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -301,6 +343,15 @@ public class SpeakerController {
 	
 	
 	/**
+	 * Method that will perform a join between
+	 * speakers and talks table.
+	 * <br>
+	 * It call the 
+	 * {@link com.spring.mssql.repositories.SpeakerRepository#getTalksCount 
+	 * getTalksCount}
+	 * query inside the
+	 * {@link com.spring.mssql.repositories.SpeakerRepository SpeakerRepository}
+	 * @param titleLike substring of the title of the talk to search for
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
