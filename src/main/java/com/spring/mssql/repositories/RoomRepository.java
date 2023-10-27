@@ -1,7 +1,10 @@
 package com.spring.mssql.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.mssql.models.Room;
 
@@ -39,4 +42,25 @@ import com.spring.mssql.models.Room;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long>{
 
+	
+	/**
+	 * This query is called by the 
+	 * {@link com.spring.mssql.controllers.RoomController#updateRoom(long, Room) updateRoom}
+	 * method inside the {@link com.spring.mssql.controllers.RoomController RoomController}.
+	 * <br>
+	 * It's purpose is to update a room.
+	 * @param roomId id of the room to update
+	 * @param roomName the new name of the room
+	 * @param roomCapacity the new capacity of the room
+	 * @param roomFloor the new floor of the room
+	 * @since 1.0.1
+	 * @author fforfabio
+	 **/
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE rooms "
+			+ "SET roomName = ?2, roomCapacity = ?3, roomFloor = ?4 "
+			+ "WHERE id = ?1", nativeQuery = true)
+	public void updateRoom(long roomId, String roomName, long roomCapacity,int roomFloor);
+	
 }

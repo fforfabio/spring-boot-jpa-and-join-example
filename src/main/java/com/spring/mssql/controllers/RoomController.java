@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,6 +65,7 @@ public class RoomController {
 	 * With this constructor we will avoid the use of the
 	 * {@link org.springframework.beans.factory.annotation.Autowired @Autowired} 
 	 * annotation.
+	 * @param roomRepository an instance of {@link com.spring.mssql.repositories.RoomRepository RoomRepository}
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -98,6 +101,7 @@ public class RoomController {
 
 	/**
 	 * Method that will return a Room with a specific ID.
+	 * @param id of the room to search for
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -116,6 +120,7 @@ public class RoomController {
 	
 	/**
 	 * Method that will create a new Room inside the database.
+	 * @param room to save
 	 * @since 1.0.0
 	 * @author fforfabio 
 	 **/
@@ -129,9 +134,46 @@ public class RoomController {
 	// @RequestBody will retrieve the parameter from the body of the request
 	public ResponseEntity<Room> createRoom(@RequestBody Room room) {
 		try {
-			Room _room = roomRepository.save(
-					new Room(room.getRoomName(), room.getRoomCapacity(), room.getRoomFloor()));
+			Room _room = roomRepository.save(new Room(room.getRoomName(), room.getRoomCapacity(), room.getRoomFloor()));
 			return new ResponseEntity<>(_room, HttpStatus.CREATED);
+		} catch (Exception e) {
+			System.out.println(e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	/**
+	 * This method will update a room that is in 
+	 * the rooms table.
+	 * <br>
+	 * It will check all the attributes of the 
+	 * {@link com.spring.mssql.models.Room Room}
+	 * object, and if some of them are null or empty
+	 * they will be set to a default value.
+	 * <br>
+	 * If the room is not inside the database a new
+	 * {@link org.springframework.data.rest.webmvc.ResourceNotFoundException ResourceNotFoundException}
+	 * is throw.
+	 * @param roomId id of the Room to update
+	 * @param room the Room object with it's new attribute's values
+	 * @throws ResourceNotFoundException if the room is not found
+	 * @since 1.0.1
+	 * @author fforfabio 
+	 **/
+	@PutMapping("/updateRoom/{roomId}")
+	@Operation(summary = "Update a room.",
+    	description = "Update a room.",
+    	responses = {
+    			@ApiResponse(responseCode = "201", description = "Room updated."),
+                @ApiResponse(responseCode = "400", description = "Cannot update room.")})
+	public ResponseEntity<Room> updateRoom(@PathVariable("roomId") long roomId, @RequestBody Room room) {
+		try {
+			if(roomRepository.findById(roomId).isPresent()) {
+				roomRepository.updateRoom(roomId, room.getRoomName(), room.getRoomCapacity(), room.getRoomFloor());
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+			throw new ResourceNotFoundException("Room " + roomId + " not found.");
 		} catch (Exception e) {
 			System.out.println(e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
