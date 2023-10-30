@@ -69,7 +69,7 @@ public class Talk {
  	 * @author fforfabio
 	 **/
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "room_id", nullable = false)
+	@JoinColumn(name = "room_id", referencedColumnName = "id", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JsonIgnore
 	private Room room;

@@ -224,7 +224,7 @@ public class Speaker {
 	
 	@Override
 	public String toString() {
-		return "Speaker: " + this.firstName + " " + this.lastName +
-				" id: " + String.valueOf(this.id);
+		return "Speaker " + String.valueOf(this.id) + " :" 
+				+ this.firstName + " " + this.lastName;
 	}
 }
