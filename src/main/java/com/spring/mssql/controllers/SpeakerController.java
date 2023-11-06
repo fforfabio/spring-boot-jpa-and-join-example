@@ -9,6 +9,9 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -158,23 +161,26 @@ public class SpeakerController {
 	 * Method that will update a speaker.
 	 * @param id of the speaker to update
 	 * @param speaker an instance of {@link com.spring.mssql.models.Speaker Speaker}
-	 * @since 1.0.0
+	 * @since 1.0.2
 	 * @author fforfabio 
 	 **/
 	@PutMapping("/speakers/{id}")
 	// @PathVarible will retrieve the parameter from the url
 	// @RequestBody will retrieve the parameter from the body of the request
 	public ResponseEntity<Speaker> updateSpeaker(@PathVariable("id") long id, @RequestBody Speaker speaker) {
-		Optional<Speaker> speakerData = speakerRepository.findById(id);
-		if (speakerData.isPresent()) {
-			Speaker _speaker = speakerData.get();
-			_speaker.setFirstName(speaker.getFirstName());
-			_speaker.setLastName(speaker.getLastName());
-			_speaker.setAge(speaker.getAge());
-			return new ResponseEntity<>(speakerRepository.save(_speaker), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		
+		ResponseEntity<Speaker> update = speakerRepository.findById(id)
+				.map(s -> {
+					s.setFirstName(speaker.getFirstName());
+					s.setLastName(speaker.getLastName());
+					s.setAge(speaker.getAge());
+					return new ResponseEntity<Speaker>(speakerRepository.save(s), HttpStatus.OK);
+				})
+				.orElseGet(() -> {
+					return new ResponseEntity<Speaker>(speakerRepository.save(speaker), HttpStatus.OK);
+				});
+		return update;
+		
 	}
 
 
@@ -369,5 +375,75 @@ public class SpeakerController {
 			System.out.println(e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	
+	/**
+	 * Method that will return all the speakers
+	 * inside the database with pagination.
+	 * @param page indicate which page of the result show.
+	 * @param size indicate the size of each page, so how much elements must be inside one page
+	 * @return the page, specified in the page parameter,
+	 * with the current speakers.
+	 * @since 1.0.2
+	 * @author fforfabio 
+	 **/
+	@GetMapping("/speakersPagination")
+	public Page<Speaker> getAllSpeakersWithPagination(@RequestParam int page, @RequestParam int size) {
+		// Create the new Pageable object
+		PageRequest pr = PageRequest.of(page, size);
+		/*
+		 * Call the Page<T> findAll(Pageable pageable); method defined
+		 * in the JpaRepository<T, ID>. 
+		 * NOTE that JpaRepository extends PagingAndSortingRepository.
+		 */
+        Page<Speaker> p = speakerRepository.findAll(pr);        
+        return p;
+	}
+	
+	
+	/**
+	 * Method that will return all the speakers
+	 * inside the database with pagination and 
+	 * sorted by lastName.
+	 * @param page indicate which page of the result show.
+	 * @param size indicate the size of each page, so how much elements must be inside one page
+	 * @return the page, specified in the page parameter,
+	 * with the current speakers ordered by lastName.
+	 * @since 1.0.2
+	 * @author fforfabio 
+	 **/
+	@GetMapping("/speakersPaginationAndSorting")
+	public Page<Speaker> getAllSpeakersWithPaginationAndSorting(@RequestParam int page, @RequestParam int size) {
+		// Create the new Pageable object
+		PageRequest pr = PageRequest.of(page, size, Sort.by("lastName"));
+		/*
+		 * Call the Page<T> findAll(Pageable pageable); method defined
+		 * in the JpaRepository<T, ID>. 
+		 * NOTE that JpaRepository extends PagingAndSortingRepository.
+		 */ 
+        Page<Speaker> p = speakerRepository.findAll(pr);        
+        return p;
+	}
+	
+	
+	/**
+	 * Method that will return all the speakers
+	 * inside the database sorted by firstName and
+	 * lastName in a descending order.
+	 * @return a list of all the speakers ordered by
+	 * firstName and lastName in a descending order.
+	 * @since 1.0.2
+	 * @author fforfabio 
+	 **/
+	@GetMapping("/speakersSorting")
+	public List<Speaker> getAllSpeakersWithSorting() {
+		/* Call the List<T> findAll(Sort sort); method defined in the
+         * JpaRepository<T, ID>. 
+         * It override the Iterable<T> findAll(Sort sort); method defined in the
+         * PagingAndSortingRepository<T, ID> interface.
+         */
+        List<Speaker> p = speakerRepository.findAll(Sort.by("firstName").and(Sort.by("lastName")).descending());
+        return p;
 	}
 }

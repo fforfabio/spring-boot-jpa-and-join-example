@@ -14,6 +14,8 @@ public class SpringBootJpaConnectionApplication {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootJpaConnectionApplication.class, args);
+		
+		// An example for the use of the logger variable of log4j2.
 		logger.debug("Project started!!!");
 	}
 }
